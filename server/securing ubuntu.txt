@@ -1,0 +1,55 @@
+# Based on DigitalOcean's guide.
+# Add sudo where applicable if not root user.
+
+# If using EC2, make sure to edit inbound rules:
+PORT    PROTOCOL    SOURCE
+80      TCP         0.0.0.0/0, ::/0
+443     TCP         0.0.0.0/0, ::/0
+
+mkdir -p /var/www/html/.well-known
+
+# NGINX
+apt-get update
+apt-get install nginx
+systemctl start nginx
+
+# CERTBOT
+
+add-apt-repository ppa:certbot/certbot
+apt-get update
+apt-get install certbot
+
+certbot certonly --webroot --webroot-path=/var/www/html -d EXAMPLE.COM -d WWW.EXAMPLE.COM
+
+openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+
+# NGINX SSL
+
+## UPLOAD nginx/snippets
+
+## UPLOAD nginx/sites-available
+
+systemctl restart nginx
+
+## AUTO RENEWAL
+crontab -e
+## INSERT AT END
+15 3 * * * /usr/bin/certbot renew --quiet --renew-hook "/bin/systemctl reload nginx"
+
+# NODE
+cd ~
+curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
+
+bash nodesource_setup.sh
+
+apt-get install nodejs
+
+apt-get install build-essential
+
+npm install -g pm2
+
+## CLONE GIT REPO
+
+pm2 start startup_server.json
+
+pm2 startup systemd
