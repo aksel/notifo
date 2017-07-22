@@ -5,6 +5,49 @@
     <title>notifo</title>
 </head>
 <body>
-Hello world.
+<div>Basic chat client</div>
+
+<h1 id="username">Connecting</h1>
+
+<input id="messageInput" style="position: relative; left: 0; bottom: 0; width: 100%"/>
+
+<h4>Messages</h4>
+<ul id="messages">
+
+</ul>
 </body>
 </html>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const appendMessage = (message) => {
+    const node = document.createElement('LI');
+    const textNode = document.createTextNode(message);
+    node.appendChild(textNode);
+    document.getElementById('messages').appendChild(node);
+  };
+
+  const user = 'aksel';
+  const socket = io({ query: { user } });
+
+  socket.emit('get');
+
+  socket.on('connect', (data) => document.getElementById('username').innerHTML = `${user}, ${socket.id}`);
+
+  socket.on('notifications', notifications => notifications.forEach(({ payload }) => appendMessage(JSON.stringify(payload))));
+
+  socket.on('notification', ({ payload }) => appendMessage(JSON.stringify(payload)));
+
+  const input = document.getElementById('messageInput');
+  input.addEventListener('keypress', (e) => {
+    const key = e.which || e.keyCode;
+    if (key === 13) { // 13 is enter
+      const message = input.value;
+      if (message.length === 0) {
+        return;
+      }
+      socket.emit('new', { destination: user, payload: message });
+      input.value = '';
+    }
+  });
+</script>
