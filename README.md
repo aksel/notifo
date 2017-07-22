@@ -1,6 +1,5 @@
 # notifo
 ## Cross platform personalized notifications, reminders and memos
-Bootstrapped with [renn](https://github.com/aksel/renn)
 
 ### Idea
 I want to develop a system for sending myself notifications, reminders and memos.
