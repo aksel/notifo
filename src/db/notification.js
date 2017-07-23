@@ -1,27 +1,16 @@
-// Mocked notification model
+const Notification = require('./models').notification;
+const execute = require('./models').execute;
 
-const v4 = require('uuid').v4;
+const find = (id, skip = 0, limit = 10) => Notification
+  .aggregate({ $match: { destination: id } })
+  .sort({ timestamp: -1 })
+  .skip(Number(skip))
+  .limit(Number(limit));
 
-const notifications = [];
+const newNotification = (destination, payload) => new Notification({ destination, payload }).save();
+const markAsRead = id => Notification.update({ _id: id }, { read: true });
 
-const find = destination => new Promise(resolve => resolve(notifications.filter(notification => notification.destination === destination)));
-
-const newNotification = (destination, payload) => new Promise((resolve) => {
-  notifications.unshift({ id: v4(), timestamp: Date.now(), destination, read: false, payload });
-  resolve(notifications[0]);
-});
-
-const markAsRead = id => new Promise((resolve, reject) => {
-  const notification = notifications.find(n => n.id === id);
-  if (notification) {
-    notification.read = true;
-    resolve(notification);
-  } else {
-    reject({ status: 400 });
-  }
-});
-
-module.exports.all = () => new Promise(resolve => resolve(notifications));
-module.exports.new = newNotification;
-module.exports.find = find;
-module.exports.markAsRead = markAsRead;
+module.exports.new = ({ destination, payload }, cb, err) => execute(newNotification(destination, payload), cb, err);
+module.exports.markAsRead = (id, cb, err) => execute(markAsRead(id), cb, err);
+module.exports.all = (cb, err) => execute(Notification.find({}), cb, err);
+module.exports.find = ({ id, skip, limit }, cb, err) => execute(find(id, skip, limit), cb, err);

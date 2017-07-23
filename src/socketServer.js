@@ -39,7 +39,7 @@ const start = (server) => {
 
     socket.on('new', ({ destination, payload }) => {
       console.log(destination,payload);
-      notification.new(destination, payload).then(({ _id, read, timestamp }) => {
+      notification.new({ destination, payload }).then(({ _id, read, timestamp }) => {
         // User is connected
         if (users[destination]) {
           users[destination].forEach(id => socket.to(id).emit('notification', { id: _id, payload, read, timestamp }));
