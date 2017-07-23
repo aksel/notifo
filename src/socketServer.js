@@ -21,7 +21,11 @@ const start = (server) => {
 
     socket.on('get', () => {
       notification.find({ destination: user })
-        .then(notifications => socket.emit('notifications', notifications))
+        .then(notifications => {
+          console.log('notifications',notifications);
+
+          socket.emit('notifications', notifications)
+        })
         .catch(err => console.error(err));
     });
 
