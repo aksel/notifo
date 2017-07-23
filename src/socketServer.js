@@ -7,8 +7,6 @@ const users = {};
 
 const start = (server) => {
   io = socketio(server);
-  console.log('io',io);
-
   io.on('connection', (socket) => {
     const user = socket.handshake.query.user;
 
@@ -21,11 +19,7 @@ const start = (server) => {
 
     socket.on('get', () => {
       notification.find({ destination: user })
-        .then(notifications => {
-          console.log('notifications',notifications);
-
-          socket.emit('notifications', notifications)
-        })
+        .then(notifications => socket.emit('notifications', notifications))
         .catch(err => console.error(err));
     });
 
@@ -34,15 +28,15 @@ const start = (server) => {
       users[user] = users[user].filter(id => id !== socket.id);
 
       if (users[user].length === 0) {
-        console.log(`USER ${users[user]} NO LONGER CONNECTED\t`);
+        console.log(`USER ${user} NO LONGER CONNECTED\t`);
         delete users[user];
       } else {
-        console.log(`USER ${users[user]} NOW HAS ${users[user].length} CONNECTIONS\t`);
+        console.log(`USER ${user} NOW HAS ${users[user].length} CONNECTIONS\t`);
       }
     });
 
     socket.on('new', ({ destination, payload }) => {
-      console.log(destination,payload);
+      console.log('NEW NOTIFICATION ---- ', destination,payload);
       notification.new({ destination, payload }).then(({ _id, read, timestamp }) => {
         // User is connected
         if (users[destination]) {
