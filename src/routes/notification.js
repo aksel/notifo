@@ -8,6 +8,8 @@ router.get('/', validate.query(['destination']), (req, res, next) => notificatio
 
 router.get('/all', (req, res, next) => notification.all(notifications => res.json({ notifications }), next));
 
+router.put('/:id/read', (req, res, next) => notification.markAsRead(req.params.id, () => res.sendStatus(200), next));
+
 // eslint-disable-next-line no-unused-vars
 router.use((err, req, res, next) => res.status(err.status ? err.status : 500).json({ error: err }));
 
