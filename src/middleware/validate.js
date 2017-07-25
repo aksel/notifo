@@ -3,7 +3,7 @@ const validate = (object = {}, required, next) => {
 
   const missing = required.filter(column => keys.indexOf(column) === -1);
   if (missing.length > 0) {
-    next({ status: 400, message: `Invalid body. Missing: ${missing}` });
+    next({ status: 400, message: `Invalid request. Missing: ${missing}` });
   } else {
     next();
   }
