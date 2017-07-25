@@ -1,9 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
+const router = require('./routes');
 const socketServer = require('./socketServer');
-//const router = require('./routes');
 
 const PORT = process.env.PORT || 4000;
 
@@ -13,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-//app.use(router);
+app.use(router);
 
 app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
