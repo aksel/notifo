@@ -5,6 +5,7 @@ const find = (destination, skip = 0, limit = 10) => Notification
   .aggregate({ $match: { destination } })
   .sort({ timestamp: -1 })
   .skip(Number(skip))
+  .project({ _id: 0, id: '$_id', destination: 1, payload: 1, timestamp: 1, read: 1 })
   .limit(Number(limit));
 
 const newNotification = (destination, payload) => new Notification({ destination, payload }).save();
