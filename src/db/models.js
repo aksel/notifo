@@ -14,8 +14,13 @@ const notificationSchema = mongoose.Schema({
   read: { type: Boolean, default: false },
 });
 
-module.exports.notification = mongoose.model('Notification', notificationSchema);
+const deviceSchema = mongoose.Schema({
+  userId: { type: String, required: true },
+  deviceId: { type: String, required: true },
+});
 
+module.exports.notification = mongoose.model('Notification', notificationSchema);
+module.exports.device = mongoose.model('Device', deviceSchema);
 module.exports.test = mongoose.model('Test', testSchema);
 module.exports.execute = (promise, cb, err) => {
   if (cb) {
