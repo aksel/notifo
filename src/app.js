@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const router = require('./routes');
 const socketServer = require('./socketServer');
+const agenda = require('./agenda');
 
 const PORT = process.env.PORT || 4000;
 
@@ -24,6 +25,7 @@ app.use((err, req, res, next) => res.status(err.status ? err.status : 500).json(
 const server = app.listen(PORT);
 
 socketServer.start(server);
+agenda.start();
 
 const gracefulShutdown = () => {
   server.close(() => process.exit());
