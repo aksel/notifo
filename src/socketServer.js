@@ -47,4 +47,11 @@ const start = (server) => {
   });
 };
 
+const sendNotification = ({ _id, to: user, payload, read, timestamp }) => {
+  if (io && users[user]) {
+    users[user].forEach(socketId => io.sockets.connected[socketId].emit('notification', { id: _id, payload, read, timestamp }));
+  }
+};
+
 module.exports.start = start;
+module.exports.sendNotification = sendNotification;
